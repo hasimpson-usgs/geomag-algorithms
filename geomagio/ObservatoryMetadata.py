@@ -15,6 +15,8 @@ DEFAULT_METADATA = {
             'declination_base': 5527,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 500,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -45,6 +47,8 @@ DEFAULT_METADATA = {
             'declination_base': 5527,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 500,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -61,6 +65,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'BRW': {
@@ -75,6 +85,8 @@ DEFAULT_METADATA = {
             'declination_base': 16000,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 2500,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -91,6 +103,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'BRT': {
@@ -135,6 +153,8 @@ DEFAULT_METADATA = {
             'declination_base': 1530,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 350,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -151,6 +171,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'CMO': {
@@ -165,6 +191,8 @@ DEFAULT_METADATA = {
             'declination_base': 16876,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 2500,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -182,6 +210,8 @@ DEFAULT_METADATA = {
             'declination_base': 13200,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 2500,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -198,6 +228,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'DHT': {
@@ -242,6 +278,8 @@ DEFAULT_METADATA = {
             'declination_base': 210942,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 500,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -258,6 +296,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'FRN': {
@@ -272,6 +316,8 @@ DEFAULT_METADATA = {
             'declination_base': 9250,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 350,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -288,6 +334,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'GUA': {
@@ -302,6 +354,8 @@ DEFAULT_METADATA = {
             'declination_base': 1157,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 300,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -318,6 +372,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'HON': {
@@ -332,6 +392,8 @@ DEFAULT_METADATA = {
             'declination_base': 6920,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 300,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -348,6 +410,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'NEW': {
@@ -362,6 +430,8 @@ DEFAULT_METADATA = {
             'declination_base': 12133,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 700,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -378,6 +448,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'SHU': {
@@ -392,6 +468,8 @@ DEFAULT_METADATA = {
             'declination_base': 13974,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 620,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -408,6 +486,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'SIT': {
@@ -422,6 +506,8 @@ DEFAULT_METADATA = {
             'declination_base': 16523,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 1000,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -438,6 +524,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'SJG': {
@@ -452,6 +544,8 @@ DEFAULT_METADATA = {
             'declination_base': 209800,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 300,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -468,6 +562,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'TUC': {
@@ -482,6 +582,8 @@ DEFAULT_METADATA = {
             'declination_base': 7258,
             'is_gin': False,
             'is_intermagnet': False,
+            'd_conversion': 10000,
+            'k9-limit': 350,
             'conditions_of_use': 'The Conditions of Use for data provided' +
                     ' through INTERMAGNET and acknowledgement templates' +
                     ' can be found at www.intermagnet.org'
@@ -498,6 +600,12 @@ DEFAULT_METADATA = {
             'second': {
                 'data_interval_type': 'Average 1-Second'
             }
+        },
+        'definitive': {
+            'D conversion factor is a fixed value used to allow' +
+            'Declination to be converted from minutes of arc to equivalent' +
+            'nanoteslas. Set to H/3438*10000 where H is the annual mean' +
+            'value of horizontal intensity.'
         }
     },
     'USGS': {
