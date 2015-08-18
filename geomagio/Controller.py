@@ -10,6 +10,7 @@ from TimeseriesFactoryException import TimeseriesFactoryException
 from Util import ObjectView
 
 import edge
+import iaf
 import iaga2002
 import pcdcp
 import imfv283
@@ -72,6 +73,7 @@ class Controller(object):
         # process
         processed = algorithm.process(timeseries)
         # output
+        self._check_iaf(options, processed, start, end)
         self._outputFactory.put_timeseries(
                 timeseries=processed,
                 starttime=options.starttime,
@@ -140,6 +142,43 @@ class Controller(object):
                 'endtime': output_gap[1]
             }))
 
+    def _check_iaf(self, options, timeseries, start, end):
+        """check iaf
+
+        Parameters
+        ----------
+        options: dictionary
+            The dictionary of all the command line arguments. Could in theory
+            contain other options passed in by the controller.
+        timeseries: obspy.core.stream
+            The current timeseries data.
+        start: UTCDateTime
+            starttime of data to fetch
+        end: UTCDateTime
+            endtime of data to fetch
+        Notes
+        -----
+        IAF output writes minutes, daily, hourly, and tri-hourly data.
+            Daily and Hourly data can be calculated from the minutes data.
+            The Tri-hourly data is the K index, and must be read in seperately,
+            for the time being, we are manually reading it in. Someday IAF
+            should probably get it's own algorithm.
+        """
+        if (
+                options.output_iaf_file is not None or
+                options.output_iaf_stdout is not False or
+                options.output_iaf_url is not None) and \
+                timeseries.select(channel='K').count() < 1:
+            timeseries += self._inputFactory.get_timeseries(
+                    starttime=start,
+                    endtime=end,
+                    interval='hourly',
+                    channels=['K'])
+            # TODO check if the sample rate is correct.
+
+
+
+
     def _get_output_channels(self, algorithm_channels, commandline_channels):
         """get output channels
 
@@ -186,6 +225,23 @@ def main(args):
                 type=args.type,
                 interval=args.interval,
                 locationCode=args.locationcode)
+    elif args.input_iaf_file is not None:
+        inputfactory = iaf.StreamIAFFactory(
+                stream=open(args.input_iaf_file, 'rb'),
+                observatory=args.observatory,
+                interval=args.interval,
+                version1_flag=args.iaf_ververion1_calculated)
+    elif args.input_iaf_stdin:
+        inputfactory = iaf.StreamIAFFactory(
+                stream=sys.stdin,
+                interval=args.interval,
+                version1_flag=args.iaf_ververion1_calculated)
+    elif args.input_iaf_url is not None:
+        inputfactory = iaf.IAFFactory(
+                urlTemplate=args.input_iaga_url,
+                observatory=args.observatory,
+                interval=args.interval,
+                version1_flag=args.iaf_ververion1_calculated)
     elif args.input_iaga_file is not None:
         inputfactory = iaga2002.StreamIAGA2002Factory(
                 stream=open(args.input_iaga_file, 'r'),
@@ -250,7 +306,28 @@ def main(args):
         print >> sys.stderr, 'Missing required input directive.'
 
     # Output Factory
-    if args.output_iaga_file is not None:
+    if args.output_iaf_file is not None:
+        outputfactory = iaf.StreamIAFFactory(
+                stream=open(args.output_iaf_file, 'wb'),
+                observatory=args.observatory,
+                type=args.type,
+                interval=args.interval,
+                version1_flag=args.iaf_ververion1_calculated)
+    elif args.output_iaf_stdout:
+        outputfactory = iaf.StreamIAFFactory(
+                stream=sys.stdout,
+                observatory=args.observatory,
+                type=args.type,
+                interval=args.interval,
+                version1_flag=args.iaf_ververion1_calculated)
+    elif args.output_iaf_url is not None:
+        outputfactory = iaf.IAFFactory(
+                urlTemplate=args.output_iaf_url,
+                observatory=args.observatory,
+                type=args.type,
+                interval=args.interval,
+                version1_flag=args.iaf_ververion1_calculated)
+    elif args.output_iaga_file is not None:
         outputfactory = iaga2002.StreamIAGA2002Factory(
                 stream=open(args.output_iaga_file, 'wb'),
                 observatory=args.observatory,
@@ -376,7 +453,7 @@ def parse_args(args):
             choices=['R0', 'R1', 'RM', 'Q0', 'D0', 'C0'])
     parser.add_argument('--interval',
             default='minute',
-            choices=['hourly', 'minute', 'second'])
+            choices=['minute', 'second', 'hourly', 'daily'])
     parser.add_argument('--update',
             action='store_true',
             default=False,
@@ -424,11 +501,24 @@ def parse_args(args):
     parser.add_argument('--input-goes-user',
             default='GEOMAG',
             help='The user name to use to retrieve data from GOES')
+    parser.add_argument('--iaf-ververion1-calculated',
+            action='store_true',
+            default=False,
+            help='Flag to indicate the iaf F channel is calculated F.' +
+                    'In which case it will not be stored in a channel.')
 
     # Input group
     input_group = parser.add_mutually_exclusive_group(required=True)
     input_group.add_argument('--input-edge',
             help='Host IP #, see --input-edge-port for optional args')
+    input_group.add_argument('--input-iaf-file',
+            help='Reads from the specified file.')
+    input_group.add_argument('--input-iaf-stdin',
+            action='store_true',
+            default=False,
+            help='Pass in an iaf file using redirection from stdin.')
+    input_group.add_argument('--input-iaf-url',
+            help='Example: file://./%%(obs)s%%(ym)s.%%(i)s')
     input_group.add_argument('--input-iaga-file',
             help='Reads from the specified file.')
     input_group.add_argument('--input-iaga-magweb',
@@ -463,6 +553,13 @@ def parse_args(args):
 
     # Output group
     output_group = parser.add_mutually_exclusive_group(required=True)
+    output_group.add_argument('--output-iaf-file',
+            help='Write to a single iaga file.')
+    output_group.add_argument('--output-iaf-stdout',
+            action='store_true', default=False,
+            help='Write to stdout.')
+    output_group.add_argument('--output-iaf-url',
+            help='Example: file://./%%(obs)s%%(ym)s.%%(i)s')
     output_group.add_argument('--output-iaga-file',
             help='Write to a single iaga file.')
     output_group.add_argument('--output-iaga-stdout',
