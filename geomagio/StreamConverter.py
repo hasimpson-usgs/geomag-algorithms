@@ -33,8 +33,8 @@ def get_geo_from_mag(mag):
     mag_d = d.data
     (geo_x, geo_y) = ChannelConverter.get_geo_from_mag(mag_h, mag_d)
     return obspy.core.Stream((
-        __get_trace('X', h.stats, geo_x),
-        __get_trace('Y', d.stats, geo_y),
+        _get_trace('X', h.stats, geo_x),
+        _get_trace('Y', d.stats, geo_y),
         z, f))
 
 
@@ -59,7 +59,7 @@ def get_deltaf_from_geo(geo):
 
     Parameters
     ----------
-    obs: obspy.core.Stream
+    geo: obspy.core.Stream
         stream containing the observatory components H, D or E, Z, and F.
 
     Returns
@@ -74,7 +74,7 @@ def get_deltaf_from_geo(geo):
     fv = ChannelConverter.get_computed_f_using_squares(x, y, z)
     G = ChannelConverter.get_deltaf(fv, fs)
     return obspy.core.Stream((
-            __get_trace('G', x.stats, G), ))
+            _get_trace('G', x.stats, G), ))
 
 
 def get_deltaf_from_obs(obs):
@@ -96,8 +96,20 @@ def get_deltaf_from_obs(obs):
     e = __get_obs_e_from_obs(obs)
     fv = ChannelConverter.get_computed_f_using_squares(h, e, z)
     G = ChannelConverter.get_deltaf(fv, fs)
+
     return obspy.core.Stream((
-            __get_trace('G', h.stats, G), ))
+            _get_trace('G', h.stats, G), ))
+
+
+def get_deltaf_from_mag(mag):
+    h = mag.select(channel='H')[0]
+    z = mag.select(channel='Z')[0]
+    fs = mag.select(channel='F')[0]
+    fv = ChannelConverter.get_computed_f_using_squares(h, 0, z)
+    G = ChannelConverter.get_deltaf(fv, fs)
+
+    return obspy.core.Stream((
+            _get_trace('G', h.stats, G), ))
 
 
 def get_mag_from_geo(geo):
@@ -121,8 +133,8 @@ def get_mag_from_geo(geo):
     geo_y = y.data
     (mag_h, mag_d) = ChannelConverter.get_mag_from_geo(geo_x, geo_y)
     return obspy.core.Stream((
-            __get_trace('H', x.stats, mag_h),
-            __get_trace('D', y.stats, mag_d),
+            _get_trace('H', x.stats, mag_h),
+            _get_trace('D', y.stats, mag_d),
             z, f))
 
 
@@ -149,8 +161,8 @@ def get_mag_from_obs(obs):
             numpy.float64(e.stats.declination_base) / 10)
     (mag_h, mag_d) = ChannelConverter.get_mag_from_obs(obs_h, obs_e, d0)
     return obspy.core.Stream((
-            __get_trace('H', h.stats, mag_h),
-            __get_trace('D', e.stats, mag_d),
+            _get_trace('H', h.stats, mag_h),
+            _get_trace('D', e.stats, mag_d),
             z, f))
 
 
@@ -197,12 +209,12 @@ def get_obs_from_mag(mag, include_d=False):
     (obs_h, obs_e) = ChannelConverter.get_obs_from_mag(mag_h, mag_d, d0)
 
     traces = (
-        __get_trace('H', h.stats, obs_h),
-        __get_trace('E', d.stats, obs_e),
+        _get_trace('H', h.stats, obs_h),
+        _get_trace('E', d.stats, obs_e),
         z, f)
     if include_d:
         obs_d = ChannelConverter.get_obs_d_from_obs(obs_h, obs_e)
-        traces = traces + (__get_trace('D', d.stats, obs_d),)
+        traces = traces + (_get_trace('D', d.stats, obs_d),)
     return obspy.core.Stream(traces)
 
 
@@ -236,7 +248,7 @@ def get_obs_from_obs(obs, include_e=False, include_d=False):
     return obspy.core.Stream(traces)
 
 
-def __get_trace(channel, stats, data):
+def _get_trace(channel, stats, data):
     """Utility to create a new trace object.
 
     Parameters
@@ -278,7 +290,7 @@ def __get_obs_d_from_obs(obs):
     except:
         h = obs.select(channel='H')[0]
         e = obs.select(channel='E')[0]
-        d = __get_trace('D', e.stats,
+        d = _get_trace('D', e.stats,
                 ChannelConverter.get_obs_d_from_obs(h.data, e.data))
     return d
 
@@ -303,6 +315,6 @@ def __get_obs_e_from_obs(obs):
     except:
         h = obs.select(channel='H')[0]
         d = obs.select(channel='D')[0]
-        e = __get_trace('E', d.stats,
+        e = _get_trace('E', d.stats,
                 ChannelConverter.get_obs_e_from_obs(h.data, d.data))
     return e
