@@ -67,6 +67,50 @@ def get_trace_gaps(trace):
         gaps.append(gap)
     return gaps
 
+def get_traces(trace, interval='hours'):
+    """Use array of times to slice up trace and collect statistics.
+    Parameters
+    ----------
+        trace :
+            a time-series trace of data
+        interval: String
+            Interval to use for trace boundaries.
+            Trace should include complete intervals.
+            'hours', 'days', 'months' are accepted
+    Returns
+    -------
+        List
+            Array-like list of traces with statistics.
+    """
+    traces = []
+
+    starttime = trace.stats.starttime
+    endtime = trace.stats.endtime
+
+    date = starttime
+
+    while date < endtime:
+        start = date
+        if interval == 'hours':
+            date = start + 3600
+        elif interval == 'days':
+            date = start + 86400
+        elif interval == 'months':
+            year = date.year
+            month = date.month + 1
+            if month > 12:
+                month = 1
+                year += 1
+            date = UTCDateTime(year, month, 1)
+        end = date - 60
+
+        localTrace = trace.slice(start, end)
+        localTrace.stats.statistics = statistics(localTrace.data)
+
+        traces.append(localTrace)
+
+    return traces
+
 
 def get_merged_gaps(gaps):
     """Get gaps merged across channels/streams
@@ -110,3 +154,35 @@ def get_merged_gaps(gaps):
     if merged_gap is not None:
         merged_gaps.append(merged_gap)
     return merged_gaps
+
+
+def statistics(data):
+    """Calculate average, standard deviation, minimum and maximum on given
+    trace, add them to a 'statistics' object.
+    Parameters
+    ----------
+        data : <numpy.ndarray>
+            an array of time-series data
+    Returns
+    -------
+        Dictionary
+            Object with key/value pairs for statistics
+    """
+    mean = numpy.nanmean(data)
+    # Skip some calculations if this entire array is NaN's.
+    if not (numpy.isnan(mean)):
+        # Ignoring any NaN's for these calculations.
+        statistics = {
+            'average': mean,
+            'maximum': numpy.nanmax(data),
+            'minimum': numpy.nanmin(data),
+            'standarddeviation': numpy.nanstd(data)
+        }
+    else:
+        statistics = {
+            'average': numpy.nan,
+            'maximum': numpy.nan,
+            'minimum': numpy.nan,
+            'standarddeviation': numpy.nan
+        }
+    return statistics
