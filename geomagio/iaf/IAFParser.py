@@ -28,8 +28,8 @@ class IAFParser(object):
     ----------
     headers : dict
         parsed IAF headers.
-    comments : array
-        parsed comments.
+    metadata : dict
+        metadata provided
     channels : array
         parsed channel names.
     times : array
@@ -49,12 +49,8 @@ class IAFParser(object):
         self.metadata = {
             'network': 'NT'
         }
-        # header comments
-        self.comments = []
         # array of channel names
         self.channels = []
-        # timestamps of data (datetime.datetime)
-        self.times = []
         # dictionary of data (channel : numpy.array<float64>)
         self.data = {}
 
@@ -65,6 +61,8 @@ class IAFParser(object):
         ----------
         data : str
             IAF binary formatted file contents.
+        interval : {'minute', 'hourly', 'daily'}
+            interval of data to be returned
         """
         start = 0
         end = REC_LENGTH
@@ -83,7 +81,12 @@ class IAFParser(object):
     def _parse_header(self, record):
         """Parse header line.
 
-        Adds value to ``self.headers``.
+        Parameters
+        ----------
+        record : str
+            a single day of data
+
+        Adds value to ``self.headers``
         """
         self.headers['station'] = record[0].strip()
         self.headers['date'] = record[1]
@@ -117,7 +120,16 @@ class IAFParser(object):
         self.channels.append('K')
 
     def _parse_data(self, interval, record):
-        """
+        """parse data
+
+        Parameters
+        ----------
+        interval : {'minute', 'hourly', 'daily'}
+            interval of data to be returned
+        record : str
+            a single day of data
+
+        Adds values to ``self.data``
         """
         if 'station' not in self.metadata:
             self.starttime = UTCDateTime(str(self.headers['date']))
@@ -152,18 +164,9 @@ class IAFParser(object):
         """
         NOTES
         -----
-        1) convert all arrays in numpy arrays
+        1) convert all arrays to numpy arrays
         2) convert missing data to nan's
         3) convert all channels but K to correct value by dividing by 10
-        4) In version 2, and beyond, the MSG channel is a mixed value.
-           For our purposes MSG = deltaF (normalized to ignore observatory)
-           F(v) is calculated F, calculated using the first 3 channels.
-           F(s) is the scaler F
-           If F(v) and F(s) is available MSG is deltaF
-           If F(s) is missing MSG is missing
-           If F(v) is missing MSG is actually the negative F(s).
-           - So for the final step, caculate the F(s) channel, and
-             Nan any MSG value where F(s) doesn't exist
         """
 
         for channel in self.data.keys():
@@ -172,7 +175,7 @@ class IAFParser(object):
             data[data == EIGHTS] = numpy.nan
             data[data == NINES] = numpy.nan
             if channel == 'K':
-                data[data==K_NINES] = numpy.nan
+                data[data == K_NINES] = numpy.nan
             else:
                 data = numpy.divide(data, 10.)
             self.data[channel] = data
