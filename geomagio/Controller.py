@@ -176,9 +176,6 @@ class Controller(object):
                     channels=['K'])
             # TODO check if the sample rate is correct.
 
-
-
-
     def _get_output_channels(self, algorithm_channels, commandline_channels):
         """get output channels
 
@@ -230,18 +227,18 @@ def main(args):
                 stream=open(args.input_iaf_file, 'rb'),
                 observatory=args.observatory,
                 interval=args.interval,
-                version1_flag=args.iaf_ververion1_calculated)
+                version1_flag=args.iaf_version1_calculated)
     elif args.input_iaf_stdin:
         inputfactory = iaf.StreamIAFFactory(
                 stream=sys.stdin,
                 interval=args.interval,
-                version1_flag=args.iaf_ververion1_calculated)
+                version1_flag=args.iaf_version1_calculated)
     elif args.input_iaf_url is not None:
         inputfactory = iaf.IAFFactory(
-                urlTemplate=args.input_iaga_url,
+                urlTemplate=args.input_iaf_url,
                 observatory=args.observatory,
                 interval=args.interval,
-                version1_flag=args.iaf_ververion1_calculated)
+                version1_flag=args.iaf_version1_calculated)
     elif args.input_iaga_file is not None:
         inputfactory = iaga2002.StreamIAGA2002Factory(
                 stream=open(args.input_iaga_file, 'r'),
@@ -312,21 +309,21 @@ def main(args):
                 observatory=args.observatory,
                 type=args.type,
                 interval=args.interval,
-                version1_flag=args.iaf_ververion1_calculated)
+                version1_flag=args.iaf_version1_calculated)
     elif args.output_iaf_stdout:
         outputfactory = iaf.StreamIAFFactory(
                 stream=sys.stdout,
                 observatory=args.observatory,
                 type=args.type,
                 interval=args.interval,
-                version1_flag=args.iaf_ververion1_calculated)
+                version1_flag=args.iaf_version1_calculated)
     elif args.output_iaf_url is not None:
         outputfactory = iaf.IAFFactory(
                 urlTemplate=args.output_iaf_url,
                 observatory=args.observatory,
                 type=args.type,
                 interval=args.interval,
-                version1_flag=args.iaf_ververion1_calculated)
+                version1_flag=args.iaf_version1_calculated)
     elif args.output_iaga_file is not None:
         outputfactory = iaga2002.StreamIAGA2002Factory(
                 stream=open(args.output_iaga_file, 'wb'),
@@ -501,7 +498,7 @@ def parse_args(args):
     parser.add_argument('--input-goes-user',
             default='GEOMAG',
             help='The user name to use to retrieve data from GOES')
-    parser.add_argument('--iaf-ververion1-calculated',
+    parser.add_argument('--iaf-version1-calculated',
             action='store_true',
             default=False,
             help='Flag to indicate the iaf F channel is calculated F.' +
