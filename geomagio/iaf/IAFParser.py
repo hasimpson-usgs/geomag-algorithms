@@ -7,7 +7,6 @@ import sys
 from datetime import datetime
 from obspy.core import UTCDateTime
 from ..edge import EdgeFactory
-# from ..StreamConverter.py
 
 # values that represent missing data points in IAF
 EIGHTS = numpy.float64('888888')
@@ -132,7 +131,6 @@ class IAFParser(object):
                 start_record = 16 + 1440 * count
                 end_record = 16 + 1440 * (count+1)
                 self.data[channel].extend(record[start_record:end_record])
-                print record[start_record:end_record]
         elif interval == 'hourly':
             for channel, count in zip(self.channels[0:4], xrange(0, 4)):
                 start_record = 5776 + 24 * (count)
@@ -149,7 +147,6 @@ class IAFParser(object):
         start_record = 5876
         end_record = 5884
         self.data[channel].extend(record[start_record:end_record])
-        print self.headers['date'], record[start_record:end_record]
 
     def _post_process(self):
         """
@@ -169,10 +166,7 @@ class IAFParser(object):
              Nan any MSG value where F(s) doesn't exist
         """
 
-        print self.data.keys()
         for channel in self.data.keys():
-            print channel, self.data[channel][0], \
-                    self.data[channel][len(self.data) - 1]
             data = numpy.array(self.data[channel], dtype=numpy.float64)
             # filter empty values
             data[data == EIGHTS] = numpy.nan
@@ -182,5 +176,3 @@ class IAFParser(object):
             else:
                 data = numpy.divide(data, 10.)
             self.data[channel] = data
-            print channel, self.data[channel][0], \
-                    self.data[channel][len(self.data) - 1]
