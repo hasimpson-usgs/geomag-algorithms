@@ -8,7 +8,8 @@ from .. import ChannelConverter
 from .. import StreamConverter
 from ..TimeseriesFactory import TimeseriesFactory
 from ..TimeseriesFactoryException import TimeseriesFactoryException
-from ..edge import ObservatoryMetadata
+from ..ObservatoryMetadata import ObservatoryMetadata
+from ..Url import URL
 
 from IAFParser import IAFParser
 from IAFWriter import IAFWriter
@@ -17,36 +18,6 @@ from IAFWriter import IAFWriter
 # pattern for IAF file names
 # example bou10jan.bin
 IAF_FILE_PATTERN = '%(OBS)s%(yb)s.bin'
-
-
-def read_url(url):
-    """Open and read url contents.
-
-    Parameters
-    ----------
-    url : str
-        A urllib2 compatible url, such as http:// or file://.
-
-    Returns
-    -------
-    str
-        contents returned by url.
-
-    Raises
-    ------
-    urllib2.URLError
-        if any occurs
-    """
-    response = urllib2.urlopen(url)
-    content = None
-    try:
-        content = response.read()
-    except urllib2.URLError, e:
-        print e.reason
-        raise
-    finally:
-        response.close()
-    return content
 
 
 class IAFFactory(TimeseriesFactory):
@@ -112,9 +83,10 @@ class IAFFactory(TimeseriesFactory):
         interval = interval or self.interval
         months = self._get_months(starttime, endtime)
         timeseries = obspy.core.Stream()
+        url = URL(self.urlTemplate)
         for month in months:
-            url = self._get_url(observatory, month, type, interval)
-            iafFile = read_url(url)
+            url_id = url.get_url(observatory, month, type, interval)
+            iafFile = url.read_url(url_id)
             timeseries += self.parse_string(iafFile,
                     self._version1_flag, interval)
         # merge channel traces for multiple months
@@ -202,11 +174,11 @@ class IAFFactory(TimeseriesFactory):
         starttime = starttime or stats.starttime
         endtime = endtime or stats.endtime
         months = self._get_months(starttime, endtime)
+        url = URL(self.urlTemplate)
         for month in months:
-            month_filename = self._get_file_from_url(
-                    self._get_url(observatory, month, type, interval))
+            month_filename = url.get_file_from_url(
+                    url.get_url(observatory, month, type, interval))
             month_timeseries = self._get_slice(timeseries, month, interval)
-            print month_timeseries
             with open(month_filename, 'wb') as fh:
                 self.write_file(fh, month_timeseries, channels)
 
@@ -271,35 +243,6 @@ class IAFFactory(TimeseriesFactory):
             stream += obspy.core.Stream((StreamConverter._get_trace(
                     'F', deltaf.stats, fs), ))
 
-    def _get_file_from_url(self, url):
-        """Get a file for writing.
-
-        Ensures parent directory exists.
-
-        Parameters
-        ----------
-        url : str
-            Url path to IMFV283
-
-        Returns
-        -------
-        str
-            path to file without file:// prefix
-
-        Raises
-        ------
-        TimeseriesFactoryException
-            if url does not start with file://
-        """
-        if not url.startswith('file://'):
-            raise TimeseriesFactoryException(
-                    'Only file urls are supported for writing')
-        filename = url.replace('file://', '')
-        parent = os.path.dirname(filename)
-        if not os.path.exists(parent):
-            os.makedirs(parent)
-        return filename
-
     def _get_months(self, starttime, endtime):
         """Get months between (inclusive) starttime and endtime.
 
@@ -358,28 +301,6 @@ class IAFFactory(TimeseriesFactory):
             end = obspy.core.UTCDateTime(end.year, end.month, 1, 0, 0, 0)
             end = end - 1
         return timeseries.slice(start, end)
-
-    def _get_url(self, observatory, date,
-                type='definitive', interval='minute'):
-        """Get the url for a specified IMFV283 file.
-
-        Replaces patterns (described in class docstring) with values based on
-        parameter values.
-
-        Parameters
-        ----------
-        observatory : str
-            observatory code.
-        date : obspy.core.UTCDateTime
-            month to fetch (year, month)
-        type : {'definitive'}
-            data type.
-        interval : {'minute'}
-            data interval.
-        """
-        return self.urlTemplate % {
-                'OBS': observatory.upper(),
-                'ym': date.strftime('%y%b').lower()}
 
     def _set_metadata(self, stream):
         """Set metadata
